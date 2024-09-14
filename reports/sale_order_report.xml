@@ -1,0 +1,56 @@
+<!-- File: custom_sale_order_report_template.xml -->
+<odoo>
+    <template id="report_sale_order_document">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <div class="page" style="font-family: Arial, sans-serif; padding: 20px;">
+                    <!-- Company Logo -->
+                    <div class="row">
+                        <div class="col-6">
+                            <t t-if="o.company_id.logo">
+                                <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
+                                     style="max-width: 150px;"/>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Sales Order Details -->
+                    <h2>Sales Order Report</h2>
+                    <!-- Sales Order Information -->
+                    <div class="row">
+                        <div class="col-12">
+                            <strong>Sales Order No:</strong>
+                            <span t-field="o.name"/>
+                        </div>
+                        <div class="col-12">
+                            <strong>Customer:</strong>
+                            <span t-field="o.partner_id.name"/>
+                        </div>
+                        <div class="col-12">
+                            <strong>Total Amount:</strong>
+                            <span t-esc="o.amount_total"
+                                  t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                        </div>
+
+                        <div class="col-12">
+                            <strong>Preferred Mode:</strong>
+                            Cash
+                        </div>
+                    </div>
+
+                    <!-- QR Code -->
+                    <div class="row">
+                        <div class="col-12 text-right">
+                            <t t-if="o.qr_code">
+                                <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"
+                                     style="max-width: 150px;"/>
+                            </t>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+
+</odoo>

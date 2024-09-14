@@ -1,0 +1,14 @@
+<!-- File: report_action.xml -->
+<odoo>
+   <record id="report_sales_order_docket" model="ir.actions.report">
+        <field name="name">Sales Docket</field>
+        <field name="model">sale.order</field>
+        <field name="binding_type">report</field>
+        <field name="binding_view_types">list,form</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">d05_customs.report_sale_order_document</field>
+        <field name="report_file">d05_customs.report_sale_order_document</field>
+        <field name="print_report_name">'Sales Docket - %s' % object.name</field>
+    </record>
+</odoo>

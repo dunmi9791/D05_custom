@@ -1,0 +1,14 @@
+<odoo>
+<!--    <record id="view_order_form" model="ir.ui.view">-->
+<!--        <field name="name">sale.order.form</field>-->
+<!--        <field name="model">sale.order</field>-->
+<!--        <field name="arch" type="xml">-->
+<!--            <form string="Sales Order">-->
+<!--                &lt;!&ndash; Add a button to print the report &ndash;&gt;-->
+<!--                <header>-->
+<!--                    <button name="%(action_report_saleorder)d" string="Print Sales Report" type="action"/>-->
+<!--                </header>-->
+<!--            </form>-->
+<!--        </field>-->
+<!--    </record>-->
+</odoo>
