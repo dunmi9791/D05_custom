@@ -1,0 +1,17 @@
+<!-- File: custom_paperformat.xml -->
+<odoo>
+<!--    <record id="paperformat_pos_receipt" model="report.paperformat">-->
+<!--        <field name="name">POS Receipt</field>-->
+<!--        <field name="default" eval="False"/>-->
+<!--&lt;!&ndash;        <field name="format" eval="False"/>&ndash;&gt;-->
+<!--        <field name="page_height">100</field> &lt;!&ndash; Set to a large value for variable length &ndash;&gt;-->
+<!--        <field name="page_width">80</field> &lt;!&ndash; Typical receipt width in mm &ndash;&gt;-->
+<!--        <field name="orientation">Portrait</field>-->
+<!--        <field name="margin_top">5</field>-->
+<!--        <field name="margin_bottom">5</field>-->
+<!--        <field name="margin_left">5</field>-->
+<!--        <field name="margin_right">5</field>-->
+<!--        <field name="dpi">90</field>-->
+<!--    </record>-->
+
+</odoo>

@@ -1,56 +1,125 @@
-<!-- File: custom_sale_order_report_template.xml -->
+<!--&lt;!&ndash; File: custom_sale_order_report_template.xml &ndash;&gt;-->
+<!--<odoo>-->
+<!--    <template id="report_sale_order_document">-->
+<!--        <t t-call="web.html_container">-->
+<!--            <t t-foreach="docs" t-as="o">-->
+<!--                <div class="page" style="font-family: Arial, sans-serif; padding: 20px;">-->
+<!--                    &lt;!&ndash; Company Logo &ndash;&gt;-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-6">-->
+<!--                            <t t-if="o.company_id.logo">-->
+<!--                                <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo"-->
+<!--                                     style="max-width: 150px;"/>-->
+<!--                            </t>-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; Sales Order Details &ndash;&gt;-->
+<!--                    <h2>Sales Order Report</h2>-->
+<!--                    &lt;!&ndash; Sales Order Information &ndash;&gt;-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-12">-->
+<!--                            <strong>Sales Order No:</strong>-->
+<!--                            <span t-field="o.name"/>-->
+<!--                        </div>-->
+<!--                        <div class="col-12">-->
+<!--                            <strong>Customer:</strong>-->
+<!--                            <span t-field="o.partner_id.name"/>-->
+<!--                        </div>-->
+<!--                        <div class="col-12">-->
+<!--                            <strong>Total Amount:</strong>-->
+<!--                            <span t-esc="o.amount_total"-->
+<!--                                  t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>-->
+<!--                        </div>-->
+
+<!--                        <div class="col-12">-->
+<!--                            <strong>Preferred Mode:</strong>-->
+<!--                            Cash-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; QR Code &ndash;&gt;-->
+<!--                    <div class="row">-->
+<!--                        <div class="col-12 text-right">-->
+<!--                            <t t-if="o.qr_code">-->
+<!--                                <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"-->
+<!--                                     style="max-width: 150px;"/>-->
+<!--                            </t>-->
+
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </t>-->
+<!--        </t>-->
+<!--    </template>-->
+
+<!--</odoo>-->
+<!-- File: custom_sale_order_receipt_template.xml -->
 <odoo>
     <template id="report_sale_order_document">
-        <t t-call="web.html_container">
+        <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
-                <div class="page" style="font-family: Arial, sans-serif; padding: 20px;">
-                    <!-- Company Logo -->
-                    <div class="row">
-                        <div class="col-6">
-                            <t t-if="o.company_id.logo">
-                                <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo"
-                                     style="max-width: 150px;"/>
-                            </t>
+                <div class="pos_receipt">
+                    <!-- Company Info -->
+                    <div class="company_info">
+                        <t t-if="o.company_id.logo">
+                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode('utf-8')" class="company_logo"/>
+                        </t>
+                        <div class="company_name">
+                            <span t-field="o.company_id.name"/>
+                        </div>
+                        <div class="company_address">
+                            <span t-field="o.company_id.partner_id.contact_address"/>
                         </div>
                     </div>
 
-                    <!-- Sales Order Details -->
-                    <h2>Sales Order Report</h2>
-                    <!-- Sales Order Information -->
-                    <div class="row">
-                        <div class="col-12">
-                            <strong>Sales Order No:</strong>
-                            <span t-field="o.name"/>
-                        </div>
-                        <div class="col-12">
-                            <strong>Customer:</strong>
-                            <span t-field="o.partner_id.name"/>
-                        </div>
-                        <div class="col-12">
-                            <strong>Total Amount:</strong>
-                            <span t-esc="o.amount_total"
-                                  t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                        </div>
+                    <!-- Sale Order Info -->
+                    <div class="order_info">
+                        <h2>Receipt</h2>
+                        <div><strong>Order:</strong> <span t-field="o.name"/></div>
+                        <div><strong>Date:</strong> <span t-field="o.date_order" t-field-options="{'widget': 'datetime'}"/></div>
+                        <div><strong>Customer:</strong> <span t-field="o.partner_id.name"/></div>
+                    </div>
 
-                        <div class="col-12">
-                            <strong>Preferred Mode:</strong>
-                            Cash
+                    <!-- Order Lines -->
+                    <div class="order_lines">
+                        <table>
+                            <tr>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                            <t t-foreach="o.order_line" t-as="line">
+                                <tr>
+                                    <td><span t-field="line.name"/></td>
+                                    <td><span t-field="line.product_uom_qty"/></td>
+                                    <td>
+                                        <span t-field="line.price_unit" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.price_subtotal" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </table>
+                    </div>
+
+                    <!-- Total Amount -->
+                    <div class="total_amount">
+                        <div><strong>Total:</strong>
+                            <span t-field="o.amount_total" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
                         </div>
                     </div>
 
                     <!-- QR Code -->
-                    <div class="row">
-                        <div class="col-12 text-right">
-                            <t t-if="o.qr_code">
-                                <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"
-                                     style="max-width: 150px;"/>
-                            </t>
-
-                        </div>
+                    <div class="qr_code">
+                        <t t-if="o.qr_code">
+                            <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"/>
+                        </t>
                     </div>
                 </div>
             </t>
         </t>
     </template>
-
 </odoo>

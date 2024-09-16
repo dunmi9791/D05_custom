@@ -1,4 +1,3 @@
-<!-- File: report_action.xml -->
 <odoo>
    <record id="report_sales_order_docket" model="ir.actions.report">
         <field name="name">Sales Docket</field>
@@ -9,6 +8,7 @@
         <field name="report_type">qweb-pdf</field>
         <field name="report_name">D05_custom.report_sale_order_document</field>
         <field name="report_file">D05_custom.report_sale_order_document</field>
+<!--        <field name="paperformat_id" ref="D05_custom.paperformat_pos_receipt"/>-->
         <field name="print_report_name">'Sales Docket - %s' % object.name</field>
     </record>
 </odoo>
