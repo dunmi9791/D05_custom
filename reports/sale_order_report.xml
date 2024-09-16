@@ -59,12 +59,12 @@
     <template id="report_sale_order_document">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
-                <t t-call-assets="D05_custom.assets_report" t-js="false" t-css="true"/>
                 <div class="pos_receipt">
                     <!-- Company Info -->
                     <div class="company_info">
                         <t t-if="o.company_id.logo">
-                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode('utf-8')" class="company_logo"/>
+                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode('utf-8')"
+                                 style="max-width: 50mm; height: auto; display: block; margin: 0 auto;"/>
                         </t>
                         <div class="company_name">
                             <span t-field="o.company_id.name"/>
