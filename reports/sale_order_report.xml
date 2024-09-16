@@ -59,6 +59,7 @@
     <template id="report_sale_order_document">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
+                <t t-call-assets="D05_custom.assets_report" t-js="false" t-css="true"/>
                 <div class="pos_receipt">
                     <!-- Company Info -->
                     <div class="company_info">

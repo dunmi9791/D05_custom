@@ -27,6 +27,7 @@ Long description of module's purpose
         'views/templates.xml',
         'reports/sale_order_report.xml',
         'reports/paper.xml',
+        'reports/assets_reports.xml',
         'views/report_actions.xml',
         'views/sale_order_form_view.xml',
 
