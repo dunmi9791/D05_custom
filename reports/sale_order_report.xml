@@ -60,6 +60,14 @@
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
                 <div class="pos_receipt">
+                    <!-- Custom CSS to ensure printing on one page -->
+                    <style> @media print { @page { size: A4; margin: 0; /* Remove page margin to fit more content */ }
+                        html, body { width: 100%; margin: 0; padding: 0; overflow: visible; } .pos_receipt
+                        { page-break-inside: avoid; /* Prevent page breaks inside the receipt content */ }
+                        table { width: 100%; border-collapse: collapse; } th, td
+                        { border: 1px solid #000; padding: 5px; }
+                        .company_info, .order_info, .order_lines, .total_amount, .qr_code
+                        { page-break-inside: avoid; /* Avoid page breaks within these sections */ } } </style>
                     <!-- Company Info -->
                     <div class="company_info">
                         <t t-if="o.company_id.logo">
