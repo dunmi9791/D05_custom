@@ -64,18 +64,19 @@
                     <style>
                         @media print {
                             @page {
-                                size: auto;  /* Let the page size be auto to fit content */
-                                margin: 10mm;  /* Optional margin for aesthetics */
+                                size: 88mm auto;  /* Set width to 88mm and let height be auto */
+                                margin: 5mm;  /* Small margin for printing */
                             }
                             html, body {
-                                width: 100%;
+                                width: 88mm;  /* Set fixed width to 88mm */
                                 margin: 0;
                                 padding: 0;
                                 overflow: visible;
                             }
                             .pos_receipt {
-                                width: 100%;
+                                width: 88mm;  /* Ensure receipt container fits within 88mm */
                                 page-break-inside: avoid;  /* Prevent breaking inside receipt content */
+                                margin: 0 auto;  /* Center the content horizontally */
                             }
                             table {
                                 width: 100%;
@@ -83,10 +84,14 @@
                             }
                             th, td {
                                 border: 1px solid #000;
-                                padding: 5px;
+                                padding: 3px;  /* Reduced padding to fit content better on narrow width */
+                                font-size: 10px;  /* Adjusted font size to ensure all content fits */
                             }
                             .company_info, .order_info, .order_lines, .total_amount, .qr_code, .receipt_footer {
                                 page-break-inside: avoid;  /* Avoid breaking these sections across pages */
+                            }
+                            .receipt_footer {
+                                font-size: 10px;  /* Reduced font size for the footer */
                             }
                         }
                     </style>
