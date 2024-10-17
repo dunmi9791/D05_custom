@@ -127,6 +127,14 @@
                             <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"/>
                         </t>
                     </div>
+                    <!-- Footer -->
+                    <div class="receipt_footer" style="text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #000;">
+                        <p>No refund of money after payments. Thank you for your Patronage!</p>
+                        <p>Contact us: <span t-field="o.company_id.phone" t-if="o.company_id.phone"/>
+                            <t t-if="o.company_id.phone and o.company_id.partner_id.mobile"> / </t>
+                            <span t-field="o.company_id.partner_id.mobile" t-if="o.company_id.partner_id.mobile"/>
+                        </p>
+                    </div>
                 </div>
             </t>
         </t>
