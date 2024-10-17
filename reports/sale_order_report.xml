@@ -61,11 +61,11 @@
             <t t-foreach="docs" t-as="o">
                 <div class="pos_receipt">
                     <!-- Custom CSS to ensure printing on one page -->
-                    <style>
+                   <style>
                         @media print {
                             @page {
-                                size: 88mm auto;  /* Set width to 88mm and let height be auto */
-                                margin: 5mm;  /* Small margin for printing */
+                                size: D05;  /* Use the pre-defined D05 paper format */
+                                margin: 5mm;  /* Optional margin for better appearance */
                             }
                             html, body {
                                 width: 88mm;  /* Set fixed width to 88mm */
