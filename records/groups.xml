@@ -1,0 +1,17 @@
+<odoo>
+    <record id="module_category_sales_discount" model="ir.module.category">
+    <field name="name">D05 Permissions</field>
+    <field name="description">Category for D05 permissions in Sales</field>
+    <field name="sequence">10</field>
+</record>
+<record id="group_sales_order_discount_manager" model="res.groups">
+    <field name="name">Sales Order Discount Manager</field>
+    <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
+</record>
+    <record id="group_sales_order_price_manager" model="res.groups">
+    <field name="name">Sales Order Price Manager</field>
+    <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
+</record>
+
+
+</odoo>

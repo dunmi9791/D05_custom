@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, exceptions, _
 import base64
 import qrcode
 import io
@@ -64,3 +64,42 @@ class StockPicking(models.Model):
                             raise UserError("You cannot validate the delivery because the invoice(s) are not fully paid.")
         # Proceed with the normal validation
         return super(StockPicking, self).button_validate()
+
+
+class ProductTemplate(models.Model):
+    _inherit = 'product.template'
+
+    list_price_readonly = fields.Float(
+        string='Sale Price',
+        compute='_compute_list_price_readonly',
+    )
+    list_price = fields.Float(
+        tracking=True,  # Enable tracking on the sale price field
+    )
+
+    def _compute_list_price_readonly(self):
+        for record in self:
+            record.list_price_readonly = record.list_price
+
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    product_qty_available = fields.Float(
+        string='Available Quantity',
+        compute='_compute_product_qty_available',
+        store=False,
+    )
+
+    @api.depends('product_id')
+    def _compute_product_qty_available(self):
+        for line in self:
+            if line.product_id:
+                # Get the available quantity of the product in the company of the sale order
+                qty_available = line.product_id.with_context(company_id=line.order_id.company_id.id).qty_available
+                line.product_qty_available = qty_available
+            else:
+                line.product_qty_available = 0.0
+
+
