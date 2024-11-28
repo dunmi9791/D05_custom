@@ -1,151 +1,174 @@
-<!--&lt;!&ndash; File: custom_sale_order_report_template.xml &ndash;&gt;-->
-<!--<odoo>-->
-<!--    <template id="report_sale_order_document">-->
-<!--        <t t-call="web.html_container">-->
-<!--            <t t-foreach="docs" t-as="o">-->
-<!--                <div class="page" style="font-family: Arial, sans-serif; padding: 20px;">-->
-<!--                    &lt;!&ndash; Company Logo &ndash;&gt;-->
-<!--                    <div class="row">-->
-<!--                        <div class="col-6">-->
-<!--                            <t t-if="o.company_id.logo">-->
-<!--                                <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo"-->
-<!--                                     style="max-width: 150px;"/>-->
-<!--                            </t>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; Sales Order Details &ndash;&gt;-->
-<!--                    <h2>Sales Order Report</h2>-->
-<!--                    &lt;!&ndash; Sales Order Information &ndash;&gt;-->
-<!--                    <div class="row">-->
-<!--                        <div class="col-12">-->
-<!--                            <strong>Sales Order No:</strong>-->
-<!--                            <span t-field="o.name"/>-->
-<!--                        </div>-->
-<!--                        <div class="col-12">-->
-<!--                            <strong>Customer:</strong>-->
-<!--                            <span t-field="o.partner_id.name"/>-->
-<!--                        </div>-->
-<!--                        <div class="col-12">-->
-<!--                            <strong>Total Amount:</strong>-->
-<!--                            <span t-esc="o.amount_total"-->
-<!--                                  t-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>-->
-<!--                        </div>-->
-
-<!--                        <div class="col-12">-->
-<!--                            <strong>Preferred Mode:</strong>-->
-<!--                            Cash-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    &lt;!&ndash; QR Code &ndash;&gt;-->
-<!--                    <div class="row">-->
-<!--                        <div class="col-12 text-right">-->
-<!--                            <t t-if="o.qr_code">-->
-<!--                                <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"-->
-<!--                                     style="max-width: 150px;"/>-->
-<!--                            </t>-->
-
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </t>-->
-<!--        </t>-->
-<!--    </template>-->
-
-<!--</odoo>-->
 <!-- File: custom_sale_order_receipt_template.xml -->
 <odoo>
     <template id="report_sale_order_document">
         <t t-call="web.basic_layout">
             <t t-foreach="docs" t-as="o">
                 <div class="pos_receipt">
-                    <!-- Custom CSS to ensure printing on one page -->
-                   <style>
+                    <!-- Enhanced CSS for single-page printing -->
+                    <style>
                         @media print {
                             @page {
-                                size: D05;  /* Use the pre-defined D05 paper format */
-                                margin: 5mm;  /* Optional margin for better appearance */
+                                size: D05;
+                                margin: 3mm;
+                                overflow: hidden;
                             }
-                            html, body {
-                                width: 88mm;  /* Set fixed width to 88mm */
+                            body {
                                 margin: 0;
                                 padding: 0;
-                                overflow: visible;
+                                width: 88mm;
+                                -webkit-print-color-adjust: exact;
                             }
                             .pos_receipt {
-                                width: 88mm;  /* Ensure receipt container fits within 88mm */
-                                page-break-inside: avoid;  /* Prevent breaking inside receipt content */
-                                margin: 0 auto;  /* Center the content horizontally */
+                                width: 88mm;
+                                margin: 0 auto;
+                                font-size: 10px;
+                                line-height: 1.2;
+                                overflow: hidden;
+                                page-break-after: always;
+                                page-break-inside: avoid;
                             }
-                            table {
+                            .company_info {
+                                text-align: center;
+                                margin-bottom: 5px;
+                            }
+                            .company_info img {
+                                max-width: 60mm;
+                                height: auto;
+                            }
+                            .order_info {
+                                margin: 3px 0;
+                            }
+                            .order_lines {
                                 width: 100%;
+                                margin: 1px -2mm; /* Negative margin to extend table */
+                                padding: 0;
+                            }
+                            .order_lines table {
+                                width: calc(100% + 4mm); /* Compensate for negative margins */
                                 border-collapse: collapse;
+                                font-size: 9px;
+                                margin: 0 auto; /* Center the table */
                             }
-                            th, td {
-                                border: 1px solid #000;
-                                padding: 3px;  /* Reduced padding to fit content better on narrow width */
-                                font-size: 10px;  /* Adjusted font size to ensure all content fits */
+                            .order_lines th, .order_lines td {
+                                padding: 1px 1px; /* Reduced padding */
+                                border: none;
+                                text-align: center; /* Center align all content */
                             }
-                            .company_info, .order_info, .order_lines, .total_amount, .qr_code, .receipt_footer {
-                                page-break-inside: avoid;  /* Avoid breaking these sections across pages */
+                            .order_lines th {
+                                font-weight: bold;
+                                border-bottom: 0.5px solid #000;
+                            }
+                            .order_lines td:first-child,
+                            .order_lines th:first-child {
+                                padding-left: 0; /* Remove left padding for first column */
+                            }
+                            .order_lines td:last-child,
+                            .order_lines th:last-child {
+                                padding-right: 0; /* Remove right padding for last column */
+                            }
+                            .total_amount {
+                                margin: 5px 0;
+                                font-weight: bold;
+                            }
+                            .qr_code {
+                                text-align: center;
+                                margin: 5px 0;
+                            }
+                            .qr_code img {
+                                max-width: 30mm;.order_lines {
+                                    width: 100%;
+                                    margin: 1px -2mm; /* Negative margin to extend table */
+                                    padding: 0;
+                                }
+                                .order_lines table {
+                                    width: calc(100% + 4mm); /* Compensate for negative margins */
+                                    border-collapse: collapse;
+                                    font-size: 9px;
+                                    margin: 0 auto; /* Center the table */
+                                }
+                                .order_lines th, .order_lines td {
+                                    padding: 1px 1px; /* Reduced padding */
+                                    border: none;
+                                    text-align: center; /* Center align all content */
+                                }
+                                .order_lines th {
+                                    font-weight: bold;
+                                    border-bottom: 0.5px solid #000;
+                                }
+                                .order_lines td:first-child,
+                                .order_lines th:first-child {
+                                    padding-left: 0; /* Remove left padding for first column */
+                                }
+                                .order_lines td:last-child,
+                                .order_lines th:last-child {
+                                    padding-right: 0; /* Remove right padding for last column */
+                                }
+                                height: auto;
                             }
                             .receipt_footer {
-                                font-size: 10px;  /* Reduced font size for the footer */
+                                text-align: center;
+                                font-size: 8px;
+                                margin-top: 5px;
+                            }
+                            /* Auto-scaling text for long content */
+                            .scale-text {
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                            }
+                            /* Compact table styles */
+                            .compact-table {
+                                font-size: 8px;
+                                line-height: 1.1;
+                            }
+                            .compact-table td, .compact-table th {
+                                padding: 1px 2px;
                             }
                         }
                     </style>
-                    <!-- Company Info -->
+
+                    <!-- Company Information -->
                     <div class="company_info">
                         <t t-if="o.company_id.logo">
-                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo.decode('utf-8')"
-                                 style="max-width: 50mm; height: auto; display: block; margin: 0 auto;"/>
+                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo"/>
                         </t>
-                        <div class="company_name">
-                            <span t-field="o.company_id.name"/>
-                        </div>
-                        <div class="company_address">
-                            <span t-field="o.company_id.partner_id.contact_address"/>
-                        </div>
+                        <div t-field="o.company_id.name" class="scale-text"/>
                     </div>
 
-                    <!-- Sale Order Info -->
+                    <!-- Order Information -->
                     <div class="order_info">
-                        <h2>Receipt</h2>
-                        <div><strong>Order:</strong> <span t-field="o.name"/></div>
-                        <div><strong>Date:</strong> <span t-field="o.date_order" t-field-options="{'widget': 'datetime'}"/></div>
-                        <div><strong>Customer:</strong> <span t-field="o.partner_id.name"/></div>
+                        <div class="scale-text">Order: <span t-field="o.name"/></div>
+                        <div class="scale-text">Date: <span t-field="o.date_order"/></div>
+                        <div class="scale-text">Customer: <span t-field="o.partner_id.name"/></div>
                     </div>
 
                     <!-- Order Lines -->
                     <div class="order_lines">
-                        <table>
-                            <tr>
-                                <th>Qty</th>
-                                <th>Description</th>
-                                <th>Price</th>
-                                <th>Total</th>
-                            </tr>
-                            <t t-foreach="o.order_line" t-as="line">
-                                <tr>
-                                    <td><span t-field="line.product_uom_qty"/></td>
-                                    <td><span t-field="line.name"/></td>
-                                    <td>
-                                        <span t-field="line.price_unit" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="line.price_subtotal" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                                    </td>
+                        <table class="compact-table">
+                            <thead>
+                                <tr>                                    
+                                    <th style="width: 15%">Qty</th>
+                                    <th style="width: 45%">Item</th>
+                                    <th style="width: 20%">Price</th>
+                                    <th style="width: 20%">Total</th>
                                 </tr>
-                            </t>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.order_line" t-as="line">                                    
+                                    <td style="text-align: center"><span t-field="line.product_uom_qty"/></td>
+                                    <td class="scale-text" style="text-align: left"><span t-field="line.product_id.name"/></td>
+                                    <td style="text-align: right"><span t-field="line.price_unit"/></td>
+                                    <td style="text-align: right"><span t-field="line.price_subtotal"/></td>
+                                </tr>
+                            </tbody>
                         </table>
                     </div>
 
                     <!-- Total Amount -->
                     <div class="total_amount">
-                        <div><strong>Total:</strong>
-                            <span t-field="o.amount_total" t-field-options="{'widget': 'monetary', 'display_currency': o.currency_id}"/>
-                        </div>
+                        <div>Subtotal: <span t-field="o.amount_untaxed"/></div>
+                        <div>Tax: <span t-field="o.amount_tax"/></div>
+                        <div>Total: <span t-field="o.amount_total"/></div>
                     </div>
 
                     <!-- QR Code -->
@@ -154,13 +177,12 @@
                             <img t-att-src="'data:image/png;base64,%s' % o.qr_code.decode('utf-8')"/>
                         </t>
                     </div>
+
                     <!-- Footer -->
-                    <div class="receipt_footer" style="text-align: center; margin-top: 20px; padding-top: 10px; border-top: 1px solid #000;">
-                        <p>No refund of money after payments. Thank you for your Patronage!</p>
-                        <p>Contact us: <span t-field="o.company_id.phone" t-if="o.company_id.phone"/>
-                            <t t-if="o.company_id.phone and o.company_id.partner_id.mobile"> / </t>
-                            <span t-field="o.company_id.partner_id.mobile" t-if="o.company_id.partner_id.mobile"/>
-                        </p>
+                    <div class="receipt_footer">
+                        <div>Thank you for your business!</div>
+                        <div t-field="o.company_id.phone"/>
+                        <div t-field="o.company_id.email"/>
                     </div>
                 </div>
             </t>
