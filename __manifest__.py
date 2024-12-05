@@ -32,6 +32,14 @@ Long description of module's purpose
         'views/sale_order_form_view.xml',
 
     ],
+    'assets': {
+            'web.assets_backend': [
+                'D05_custom/static/src/css/report_style.css',
+            ],
+            'web.report_assets_common': [
+                'D05_custom/static/src/css/report_style.css',
+            ],
+        },
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',

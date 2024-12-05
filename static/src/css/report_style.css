@@ -1,0 +1,66 @@
+@media print {
+    @page {
+        size: D05;
+        margin: 3mm;
+        overflow: hidden;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+        width: 88mm;
+        -webkit-print-color-adjust: exact;
+    }
+    .pos_receipt {
+        width: 88mm;
+        margin: 0 auto;
+        font-size: 10px;
+        line-height: 1.2;
+        overflow: hidden;
+        page-break-after: always;
+        page-break-inside: avoid;
+    }
+    .company_info {
+        text-align: center;
+        margin-bottom: 5px;
+    }
+    .company_info img {
+        max-width: 60mm;
+        height: auto;
+    }
+    .order_info {
+        margin: 3px 0;
+    }
+    .order_lines {
+        width: 100%;
+        margin: 1px -2mm;
+        padding: 0;
+    }
+    .order_lines table {
+        width: calc(100% + 4mm);
+        border-collapse: collapse;
+        font-size: 9px;
+        margin: 0 auto;
+    }
+    .order_lines th, .order_lines td {
+        padding: 1px 1px;
+        border: none;
+        text-align: center;
+    }
+    .order_lines th {
+        font-weight: bold;
+        border-bottom: 0.5px solid #000;
+    }
+    .total_amount {
+        margin: 5px 0;
+        font-weight: bold;
+    }
+    .qr_code img {
+        max-width: 30mm;
+        height: auto;
+    }
+    .receipt_footer {
+        text-align: center;
+        font-size: 8px;
+        margin-top: 5px;
+    }
+}
