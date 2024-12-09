@@ -1,6 +1,6 @@
 <odoo>
    <record id="report_sales_order_docket" model="ir.actions.report">
-        <field name="name">Sales Docket</field>
+        <field name="name">Sales Docket New</field>
         <field name="model">sale.order</field>
         <field name="binding_type">report</field>
         <field name="binding_view_types">list,form</field>
