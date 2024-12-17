@@ -10,7 +10,7 @@
                     <!-- Company Information -->
                     <div class="company_info">
                         <t t-if="o.company_id.logo">
-                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.logo"/>
+                           <img t-att-src="'/web/image?model=res.company&amp;id=%s&amp;field=logo' % o.company_id.id"/>
                         </t>
                         <div t-field="o.company_id.name" class="scale-text"/>
                     </div>
