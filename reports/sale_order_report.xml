@@ -26,7 +26,7 @@
                     <div class="order_lines">
                         <table class="compact-table">
                             <thead>
-                                <tr>                                    
+                                <tr>
                                     <th style="width: 15%">Qty</th>
                                     <th style="width: 45%">Item</th>
                                     <th style="width: 20%">Price</th>
@@ -34,7 +34,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr t-foreach="o.order_line" t-as="line">                                    
+                                <tr t-foreach="o.order_line" t-as="line">
                                     <td style="text-align: center"><span t-field="line.product_uom_qty"/></td>
                                     <td class="scale-text" style="text-align: left"><span t-field="line.product_id.name"/></td>
                                     <td style="text-align: right"><span t-field="line.price_unit"/></td>
@@ -45,7 +45,7 @@
                     </div>
 
                     <!-- Total Amount -->
-                    <div class="total_amount">
+                    <div class="total_amount" style="font-size: 1.2em; font-weight: bold;">
                         <div>Subtotal: <span t-field="o.amount_untaxed"/></div>
                         <div>Tax: <span t-field="o.amount_tax"/></div>
                         <div>Total: <span t-field="o.amount_total"/></div>
