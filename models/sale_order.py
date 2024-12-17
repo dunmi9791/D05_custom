@@ -97,7 +97,7 @@ class SaleOrderLine(models.Model):
         for line in self:
             if line.product_id:
                 # Get the available quantity of the product in the company of the sale order
-                qty_available = line.product_id.with_context(company_id=line.order_id.company_id.id).qty_available
+                qty_available = line.product_id.with_context(company_id=line.order_id.company_id.id).free_qty
                 line.product_qty_available = qty_available
             else:
                 line.product_qty_available = 0.0
