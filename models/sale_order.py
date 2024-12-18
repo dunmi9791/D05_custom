@@ -59,7 +59,7 @@ class StockPicking(models.Model):
                         if not invoices:
                             raise UserError("You cannot validate the delivery because there are no invoices linked to this sale order.")
                         # Check if all invoices are paid
-                        not_paid_invoices = invoices.filtered(lambda inv: inv.payment_state != 'paid')
+                        not_paid_invoices = invoices.filtered(lambda inv: inv.payment_state not in ['paid', 'in_payment'] )
                         if not_paid_invoices:
                             raise UserError("You cannot validate the delivery because the invoice(s) are not fully paid.")
         # Proceed with the normal validation
