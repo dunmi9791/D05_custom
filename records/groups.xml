@@ -12,6 +12,10 @@
     <field name="name">Sales Order Price Manager</field>
     <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
 </record>
+    <record id="group_access_all_accounts" model="res.groups">
+    <field name="name">Access All Accounts</field>
+    <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
+</record>
 
 
 </odoo>

@@ -8,6 +8,12 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     qr_code = fields.Binary("QR Code")
+    create_date_only = fields.Date(string="Creation Date (Date Only)", compute="_compute_create_date_only", store=True)
+
+    @api.depends('create_date')
+    def _compute_create_date_only(self):
+        for record in self:
+            record.create_date_only = record.create_date.date() if record.create_date else False
 
     @api.model
     def create(self, vals):
