@@ -65,6 +65,29 @@
                         <div t-field="o.company_id.email"/>
                     </div>
                 </div>
+                <div class="picking_order">
+                        <h3>Picking Order</h3>
+                    <div class="scale-text">Order: <span t-field="o.name"/></div>
+                        <table class="compact-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%">Qty</th>
+                                    <th style="width: 45%">Item</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.order_line" t-as="line">
+                                    <td style="text-align: center"><span t-field="line.product_uom_qty"/></td>
+                                    <td class="scale-text" style="text-align: left"><span t-field="line.product_id.name"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                <div class="receipt_footer">
+                        <div>Thank you for your business!</div>
+                        <div t-field="o.company_id.phone"/>
+                        <div t-field="o.company_id.email"/>
+                    </div>
             </t>
         </t>
     </template>
