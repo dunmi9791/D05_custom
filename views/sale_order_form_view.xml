@@ -53,6 +53,20 @@
             </xpath>
         </field>
     </record>
+  <record id="view_order_form_inherit_docket_button" model="ir.ui.view">
+        <field name="name">sale.order.form.sales.docket.button</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_confirm']" position="after">
+                <button name="action_print_sales_docket"
+                        string="Print Sales Docket"
+                        type="object"
+                        class="btn-primary"
+                        modifiers="{'invisible': [('state', 'not in', ['sale', 'done'])]}"/>
+            </xpath>
+        </field>
+    </record>
 
 
 </odoo>

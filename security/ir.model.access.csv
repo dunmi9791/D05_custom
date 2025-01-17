@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_d05_customs_d05_customs,d05_customs.d05_customs,model_d05_customs_d05_customs,base.group_user,1,1,1,1
+access_credit_limit_wizard,access_credit_limit_wizard,model_credit_limit_wizard,base.group_user,1,1,1,1
+access_sale_order_credit_control,sale.order,model_sale_order,D05_custom.group_credit_control,1,0,0,0

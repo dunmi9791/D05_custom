@@ -11,4 +11,16 @@
         <field name="paperformat_id" ref="D05_custom.paperformat_pos_receipt"/>
         <field name="print_report_name">'Sales Docket - %s' % object.name</field>
     </record>
+     <menuitem id="menu_order_line_report"
+              name="Order Line Report"
+              parent="sale.sale_order_menu"
+              sequence="10"
+              action="action_order_line_report_wizard"/>
+
+    <record id="action_order_line_report_wizard" model="ir.actions.act_window">
+        <field name="name">Order Line Report</field>
+        <field name="res_model">custom.order.line.report</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 </odoo>

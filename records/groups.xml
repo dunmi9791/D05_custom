@@ -16,6 +16,16 @@
     <field name="name">Access All Accounts</field>
     <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
 </record>
+    <record id="group_approve_credit" model="res.groups">
+        <field name="name">Approve Credit</field>
+        <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
+        <field name="comment">This group grants the ability to approve credit customers.</field>
+    </record>
+    <record id="group_credit_control" model="res.groups">
+        <field name="name">Credit Control</field>
+        <field name="category_id" ref="base.module_category_accounting"/>
+        <field name="implied_ids" eval="[(4, ref('account.group_account_manager'))]"/>
+    </record>
 
 
 </odoo>

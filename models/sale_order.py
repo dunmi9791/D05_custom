@@ -3,12 +3,23 @@ import base64
 import qrcode
 import io
 from odoo.exceptions import UserError
+from odoo.exceptions import AccessError
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     qr_code = fields.Binary("QR Code")
-    create_date_only = fields.Date(string="Creation Date (Date Only)", compute="_compute_create_date_only", store=True)
+    create_date_only = fields.Date(
+        string="Creation Date (Date Only)",
+        compute="_compute_create_date_only",
+        store=True
+    )
+    payment_type = fields.Selection(
+        [('paid', 'Paid'), ('credit', 'Credit')],
+        string='Payment Type',
+        default='paid',
+        tracking=True,
+    )
 
     @api.depends('create_date')
     def _compute_create_date_only(self):
@@ -17,23 +28,31 @@ class SaleOrder(models.Model):
 
     @api.model
     def create(self, vals):
+        # Restrict setting payment_type to 'credit' for unauthorized users
+        if 'payment_type' in vals and vals['payment_type'] == 'credit' and not self.env.user.has_group(
+                'account.group_account_manager'):
+            raise AccessError("Only users in the Credit Control group can set a sale as a Credit Sale.")
         record = super(SaleOrder, self).create(vals)
-        record.generate_qr_code()
+        record.generate_qr_code()  # Generate QR code upon creation
         return record
 
     def write(self, vals):
+        # Restrict updating payment_type to 'credit' for unauthorized users
+        if 'payment_type' in vals and vals['payment_type'] == 'credit':
+            if not self.env.user.has_group('account.group_account_manager'):
+                raise AccessError("Only users in the Credit Control group can update the Payment Type to Credit Sale.")
         res = super(SaleOrder, self).write(vals)
-        if 'qr_code' not in vals:  # Ensure this doesn't trigger infinite loop
-            self.generate_qr_code()
+        if 'qr_code' not in vals:  # Prevent infinite recursion
+            self.generate_qr_code()  # Regenerate QR code on update
         return res
 
     def generate_qr_code(self):
         base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url')
         for record in self:
-            # Construct the back-end URL to the sale order
+            # Construct the URL for the sale order
             sale_order_url = f"{base_url}/web#id={record.id}&model=sale.order&view_type=form"
 
-            # Generate QR code with the URL
+            # Generate the QR code
             qr = qrcode.QRCode(
                 version=1,
                 error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -42,11 +61,44 @@ class SaleOrder(models.Model):
             )
             qr.add_data(sale_order_url)
             qr.make(fit=True)
-            img = qr.make_image(fill='black', back_color='white')
+            img = qr.make_image(fill_color='black', back_color='white')
+
+            # Convert QR code image to base64 for storing in a Binary field
             buffered = io.BytesIO()
             img.save(buffered, format="PNG")
             img_str = base64.b64encode(buffered.getvalue())
             record.sudo().write({'qr_code': img_str})
+
+    def action_print_sales_docket(self):
+        for order in self:
+            # Ensure there are invoices associated with the sale order
+            if not order.invoice_ids:
+                raise UserError("This order cannot be printed because it has no invoices.")
+
+            # Check if all invoices are posted
+            if not all(invoice.state == 'posted' for invoice in order.invoice_ids):
+                raise UserError("This order cannot be printed because not all invoices are fully posted.")
+
+            # Check if all invoices are fully paid
+            if not all(invoice.amount_residual == 0 for invoice in order.invoice_ids):
+                raise UserError("This order cannot be printed because not all invoices are fully paid.")
+
+        # Trigger the report if all conditions are met
+        return self.env.ref('D05_custom.report_sales_order_docket').report_action(self)
+
+    def _check_report_conditions(self):
+        for order in self:
+            if not order.invoice_ids:
+                raise UserError("This order cannot be printed because it has no invoices.")
+            if not all(invoice.state == 'posted' for invoice in order.invoice_ids):
+                raise UserError("This order cannot be printed as all invoices are not fully posted.")
+            if not all(invoice.amount_residual == 0 for invoice in order.invoice_ids):
+                raise UserError("This order cannot be printed as all invoices are not fully paid.")
+
+    def report_action(self, docids, data=None):
+        self._check_report_conditions()
+        return super(SaleOrder, self).report_action(docids, data)
+
 
 class StockPicking(models.Model):
     _inherit = 'stock.picking'
@@ -107,5 +159,10 @@ class SaleOrderLine(models.Model):
                 line.product_qty_available = qty_available
             else:
                 line.product_qty_available = 0.0
+
+
+
+
+
 
 
