@@ -17,9 +17,9 @@
                         </page>
 
         </xpath>
-        <xpath expr="//field[@name='vat']" position="after">
-            <field name="customer_type" readonly="1"/>
-        </xpath>
+<!--        <xpath expr="//field[@name='vat']" position="after">-->
+<!--            <field name="customer_type" readonly="1"/>-->
+<!--        </xpath>-->
         <xpath expr="//field[@name='is_company']" position="before">
             <header>
                         <button name="open_credit_wizard" string="Confirm Credit Customer" type="object" groups="D05_custom.group_approve_credit"/>
