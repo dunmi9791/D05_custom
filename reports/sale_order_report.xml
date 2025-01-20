@@ -91,4 +91,29 @@
             </t>
         </t>
     </template>
+    <template id="payment_receipt_template">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs" t-as="payment">
+                <div class="pos_receipt">
+                     <div class="company_info">
+                        <t t-if="payment.company_id.logo">
+                           <img t-att-src="'/web/image?model=res.company&amp;id=%s&amp;field=logo' % payment.company_id.id"/>
+                        </t>
+                        <div t-field="payment.company_id.name" class="scale-text"/>
+                    </div>
+                    <h2>Payment Receipt</h2>
+                     <div class="order_info">
+                        <div class="scale-text">Payment: <span t-field="payment.name"/></div>
+                        <div class="scale-text">Date: <span t-field="payment.date"/></div>
+                        <div class="scale-text">Customer: <span t-field="payment.partner_id.name"/></div>
+                    </div>
+
+                    <p>Payment Amount (Figures): <span t-esc="payment.format_with_currency(payment.amount)"/></p>
+                    <p>Payment Amount (Words): <span t-esc="payment.amount_in_words"/></p>
+                    <p>Account Balance Before: <span t-esc="payment.format_with_currency(payment.balance_after)"/></p>
+                    <p>Account Balance After: <span t-esc="payment.format_with_currency(payment.balance_before)"/></p>
+                </div>
+            </t>
+        </t>
+    </template>
 </odoo>

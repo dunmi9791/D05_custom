@@ -67,6 +67,16 @@
             </xpath>
         </field>
     </record>
+    <record id="view_account_payment_form" model="ir.ui.view">
+    <field name="name">account.payment.form.inherit</field>
+    <field name="model">account.payment</field>
+    <field name="inherit_id" ref="account.view_account_payment_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//header" position="inside">
+            <button name="%(action_payment_receipt)d" string="Print Receipt" type="action" class="btn-primary"/>
+        </xpath>
+    </field>
+</record>
 
 
 </odoo>

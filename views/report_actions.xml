@@ -1,5 +1,5 @@
 <odoo>
-   <record id="report_sales_order_docket" model="ir.actions.report">
+    <record id="report_sales_order_docket" model="ir.actions.report">
         <field name="name">Sales Docket New</field>
         <field name="model">sale.order</field>
         <field name="binding_type">report</field>
@@ -19,9 +19,25 @@
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>
+    <record id="action_order_lines_report_list" model="ir.actions.act_window">
+        <field name="name">Order Lines</field>
+        <field name="res_model">sale.order.line</field>
+        <field name="view_mode">list</field>
+    </record>
+    <record id="action_payment_receipt" model="ir.actions.report">
+        <field name="name">Payment Receipt</field>
+        <field name="model">account.payment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">D05_custom.payment_receipt_template</field>
+        <field name="print_report_name">'Payment Receipt - %s' % (object.partner_id.name)</field>
+    </record>
     <menuitem id="menu_order_line_report"
               name="Order Line Report"
               parent="sale.sale_order_menu"
               sequence="10"
               action="action_order_line_report_wizard"/>
+    <menuitem id="menu_custom_sale_lines_report"
+              name="Custom Sale Lines Report"
+              parent="sale.sale_order_menu"
+              action="action_order_lines_report_list"/>
 </odoo>
