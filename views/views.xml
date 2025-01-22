@@ -31,6 +31,18 @@
         <field name="res_model">sale.order.line</field>
         <field name="view_mode">list</field>
     </record>
+      <record id="view_users_form_inherit" model="ir.ui.view">
+    <field name="name">res.users.form.inherit</field>
+    <field name="model">res.users</field>
+    <field name="inherit_id" ref="base.view_users_form"/>
+    <field name="arch" type="xml">
+        <xpath expr="//notebook/page[@name='preferences']" position="after">
+            <page string="Warehouses">
+                <field name="warehouse_ids" widget="many2many_tags"/>
+            </page>
+        </xpath>
+    </field>
+</record>
 
   </data>
 </odoo>

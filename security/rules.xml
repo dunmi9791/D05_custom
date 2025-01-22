@@ -9,6 +9,12 @@
             </field>
             <field name="groups" eval="[(4, ref('base.group_user'))]"/>
         </record>
+        <record id="restrict_warehouse_access" model="ir.rule">
+            <field name="name">Restrict Warehouse Access</field>
+            <field name="model_id" ref="stock.model_stock_warehouse"/>
+            <field name="domain_force">[('id', 'in', user.warehouse_ids.ids)]</field>
+            <field name="groups" eval="[(4, ref('D05_custom.group_warehouse_restricted_users'))]"/>
+        </record>
 
     </data>
 </odoo>

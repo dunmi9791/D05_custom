@@ -20,3 +20,11 @@ class ResPartner(models.Model):
             'target': 'new',
             'context': {'default_partner_id': self.id}
         }
+
+class ResUsers(models.Model):
+    _inherit = 'res.users'
+
+    warehouse_ids = fields.Many2many(
+        'stock.warehouse',
+        string="Allowed Warehouses"
+    )

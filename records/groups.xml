@@ -16,6 +16,10 @@
     <field name="name">Access All Accounts</field>
     <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
 </record>
+    <record id="group_warehouse_restricted_users" model="res.groups">
+    <field name="name">Warehouse Restricted Users</field>
+    <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
+</record>
     <record id="group_approve_credit" model="res.groups">
         <field name="name">Approve Credit</field>
         <field name="category_id" ref="D05_custom.module_category_sales_discount"/>
