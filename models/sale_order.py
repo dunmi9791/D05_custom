@@ -86,8 +86,10 @@ class SaleOrder(models.Model):
                 raise UserError("This order cannot be printed because not all invoices are fully posted.")
 
             # Check if all invoices are fully paid
-            if not all(invoice.amount_residual == 0 for invoice in order.invoice_ids):
-                raise UserError("This order cannot be printed because not all invoices are fully paid.")
+            if order.customer_type != 'credit':
+                if not all(invoice.amount_residual == 0 for invoice in order.invoice_ids):
+                    raise UserError("This order cannot be printed because not all invoices are fully paid.")
+
 
         # Trigger the report if all conditions are met
         return self.env.ref('D05_custom.report_sales_order_docket').report_action(self)
@@ -117,15 +119,21 @@ class StockPicking(models.Model):
                 if sale_orders:
                     for sale_order in sale_orders:
                         if sale_order.invoice_status != 'invoiced':
-                            raise UserError("You cannot validate the delivery because the sale order has not been fully invoiced.")
+                            raise UserError(
+                                "You cannot validate the delivery because the sale order has not been fully invoiced.")
                         # Check if the invoice is paid
                         invoices = sale_order.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
                         if not invoices:
-                            raise UserError("You cannot validate the delivery because there are no invoices linked to this sale order.")
-                        # Check if all invoices are paid
-                        not_paid_invoices = invoices.filtered(lambda inv: inv.payment_state not in ['paid', 'in_payment'] )
-                        if not_paid_invoices:
-                            raise UserError("You cannot validate the delivery because the invoice(s) are not fully paid.")
+                            raise UserError(
+                                "You cannot validate the delivery because there are no invoices linked to this sale order.")
+                        # Check if all invoices are paid for non-credit customers
+                        if sale_order.partner_id.customer_type != 'credit':
+                            not_paid_invoices = invoices.filtered(
+                                lambda inv: inv.payment_state not in ['paid', 'in_payment'])
+                            if not_paid_invoices:
+                                raise UserError(
+                                    "You cannot validate the delivery because the invoice(s) are not fully paid.")
+
         # Proceed with the normal validation
         return super(StockPicking, self).button_validate()
 
