@@ -65,6 +65,9 @@
                         class="btn-primary"
                         modifiers="{'invisible': [('state', 'not in', ['sale', 'done'])]}"/>
             </xpath>
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="warehouse_id" groups="D05_custom.group_credit_control"/>
+            </xpath>
         </field>
     </record>
     <record id="view_account_payment_form" model="ir.ui.view">

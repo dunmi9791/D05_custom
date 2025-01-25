@@ -20,6 +20,12 @@ class SaleOrder(models.Model):
         default='paid',
         tracking=True,
     )
+    customer_type = fields.Selection(
+        string='Customer Type',
+        related='partner_id.customer_type',
+        store=True,  # Optional: Set to True if you want the field to be stored in the database
+        readonly=True  # Optional: Set to True to make it read-only
+    )
 
     @api.depends('create_date')
     def _compute_create_date_only(self):
