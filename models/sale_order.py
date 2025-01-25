@@ -150,12 +150,14 @@ class SaleOrderLine(models.Model):
         store=False,
     )
 
-    @api.depends('product_id')
+    @api.depends('product_id', 'order_id.warehouse_id')
     def _compute_product_qty_available(self):
         for line in self:
-            if line.product_id:
-                # Get the available quantity of the product in the company of the sale order
-                qty_available = line.product_id.with_context(company_id=line.order_id.company_id.id).free_qty
+            if line.product_id and line.order_id.warehouse_id:
+                # Get the available quantity of the product for the specific warehouse
+                qty_available = line.product_id.with_context(
+                    warehouse=line.order_id.warehouse_id.id
+                ).free_qty
                 line.product_qty_available = qty_available
             else:
                 line.product_qty_available = 0.0
