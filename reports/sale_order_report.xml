@@ -110,8 +110,8 @@
 
                     <p>Payment Amount (Figures): <span t-esc="payment.format_with_currency(payment.amount)"/></p>
                     <p>Payment Amount (Words): <span t-esc="payment.amount_in_words"/></p>
-                    <p>Account Balance Before: <span t-esc="payment.format_with_currency(payment.balance_after)"/></p>
-                    <p>Account Balance After: <span t-esc="payment.format_with_currency(payment.balance_before)"/></p>
+                    <p>Account Balance Before: <span t-esc="payment.format_with_currency(payment.balance_before)"/></p>
+                    <p>Account Balance After: <span t-esc="payment.format_with_currency(payment.balance_after)"/></p>
                 </div>
             </t>
         </t>

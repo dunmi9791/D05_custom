@@ -59,13 +59,29 @@ class AccountPayment(models.Model):
     @api.depends('amount', 'partner_id')
     def _compute_balances(self):
         for payment in self:
+            if not payment.partner_id:
+                payment.balance_before = 0.0
+                payment.balance_after = 0.0
+                continue
+
+            # Fetch all reconciled lines for the partner
             partner_ledger = self.env['account.move.line'].search([
                 ('partner_id', '=', payment.partner_id.id),
-                ('account_id.reconcile', '=', True)
+                ('account_id.reconcile', '=', True),
+                ('move_id.state', '=', 'posted')  # Only consider posted moves
             ])
-            balance = sum(ledger.debit - ledger.credit for ledger in partner_ledger)
-            payment.balance_before = balance
-            payment.balance_after = balance + payment.amount
+
+            # Compute current balance before payment (Total debit - Total credit)
+            total_debit = sum(ledger.debit for ledger in partner_ledger)
+            total_credit = sum(ledger.credit for ledger in partner_ledger)
+            balance_before = total_debit - total_credit  # Outstanding balance before payment
+
+            # Adjust balance after payment (subtract payment amount)
+            balance_after = balance_before - payment.amount
+
+            # Assign computed values
+            payment.balance_before = balance_before
+            payment.balance_after = balance_after
 
     @api.depends('amount', 'currency_id')
     def _compute_amount_in_words(self):
