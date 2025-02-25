@@ -68,6 +68,7 @@
                 <div class="picking_order">
                         <h3>Picking Order</h3>
                     <div class="scale-text">Order: <span t-field="o.name"/></div>
+                    <div class="scale-text">Customer: <span t-field="o.partner_id.name"/></div>
                         <table class="compact-table">
                             <thead>
                                 <tr>
