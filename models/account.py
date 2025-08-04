@@ -4,6 +4,9 @@ import qrcode
 import io
 from odoo.exceptions import UserError
 from num2words import num2words  # Install this library if not available
+import logging
+
+_logger = logging.getLogger(__name__)
 
 class AccountJournal(models.Model):
     _inherit = 'account.journal'
@@ -61,50 +64,44 @@ class AccountPayment(models.Model):
         store=True,  # Stored for reporting purposes
     )
 
-    @api.depends('amount', 'partner_id', 'currency_id')
+    @api.depends('partner_id', 'amount', 'currency_id', 'date', 'state', 'payment_type')
     def _compute_balances(self):
+        today = fields.Date.context_today(self)
         for payment in self:
-            if not payment.partner_id or not payment.currency_id:
-                payment.balance_before = 0.0
-                payment.balance_after = 0.0
+            if payment.state != 'posted' or not payment.partner_id:
+                payment.balance_before = payment.balance_after = 0.0
                 continue
 
-            # Fetch move lines with the specified filters
-            partner_ledger = self.env['account.move.line'].search([
+            cutoff = payment.date or today
+            company_cur = payment.company_id.currency_id
+
+            # only AR/AP, posted, unreconciled partner lines up to the payment date
+            domain = [
                 ('partner_id', '=', payment.partner_id.id),
                 ('company_id', '=', payment.company_id.id),
-                ('full_reconcile_id', '=', False),  # Exclude fully reconciled lines
-                '&',
-                ('parent_state', '=', 'posted'),
-                '|',
-                    '&',
-                    ('account_id.account_type', '=', 'liability_payable'),
-                    ('account_id.non_trade', '=', False),
-                    '&',
-                    ('account_id.account_type', '=', 'asset_receivable'),
-                    ('account_id.non_trade', '=', False),
-            ])
+                ('move_id.state', '=', 'posted'),
+                ('full_reconcile_id', '=', False),
+                ('date', '<=', cutoff),
+                ('account_id.reconcile', '=', True),  # ← picks up both receivable & payable accounts
+                ('account_id.non_trade', '=', False),  # ← your original non-trade filter
+            ]
+            lines = self.env['account.move.line'].search(domain)
 
-            # Compute balance before payment using the 'balance' field
-            balance_before = sum(line.balance for line in partner_ledger)
+            balance_before = sum(lines.mapped('balance'))
 
-            # Convert payment amount to company currency if needed
-            payment_amount = payment.amount
-            if payment.currency_id != payment.company_id.currency_id:
-                payment_amount = payment.currency_id._convert(
-                    payment.amount,
-                    payment.company_id.currency_id,
-                    payment.company_id,
-                    payment.date or fields.Date.today(),
+            amount_cc = payment.amount
+            if payment.currency_id != company_cur:
+                amount_cc = payment.currency_id._convert(
+                    payment.amount, company_cur,
+                    payment.company_id, cutoff
                 )
 
-            # Adjust balance after payment based on payment type
-            if payment.payment_type == 'outbound':
-                # Vendor payment: increases liability (add amount)
-                balance_after = balance_before + payment_amount
-            else:
-                # Customer payment: reduces receivable (subtract amount)
-                balance_after = balance_before - payment_amount
+            if payment.payment_type == 'inbound':  # customer → you
+                balance_after = balance_before - amount_cc
+            elif payment.payment_type == 'outbound':  # you → vendor
+                balance_after = balance_before + amount_cc
+            else:  # transfer or other
+                balance_after = balance_before
 
             payment.balance_before = balance_before
             payment.balance_after = balance_after
