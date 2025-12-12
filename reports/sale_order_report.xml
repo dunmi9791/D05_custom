@@ -10,7 +10,7 @@
                     <!-- Company Information -->
                     <div class="company_info">
                         <t t-if="o.company_id.logo">
-                           <img t-att-src="'/web/image?model=res.company&amp;id=%s&amp;field=logo' % o.company_id.id" style="max-width: 150px; max-height: 80px;"/>
+                           <img t-att-src="'/web/image?model=res.company&amp;id=%s&amp;field=logo' % o.company_id.id" style="max-width: 450px; max-height: 240px;"/>
                         </t>
                         <div t-field="o.company_id.name" class="scale-text"/>
                     </div>
@@ -98,7 +98,7 @@
                 <div class="pos_receipt">
                      <div class="company_info">
                         <t t-if="payment.company_id.logo">
-                           <img t-att-src="'/web/image?model=res.company&amp;id=%s&amp;field=logo' % payment.company_id.id" style="max-width: 150px; max-height: 80px;"/>
+                           <img t-att-src="'/web/image?model=res.company&amp;id=%s&amp;field=logo' % payment.company_id.id" style="max-width: 450px; max-height: 240px;"/>
                         </t>
                         <div t-field="payment.company_id.name" class="scale-text"/>
                     </div>
