@@ -30,7 +30,7 @@
                                     <th style="width: 15%">Qty</th>
                                     <th style="width: 45%">Item</th>
                                     <th style="width: 25%">Price</th>
-<!--                                    <th style="width: 20%">Total</th>-->
+                                    <th style="width: 20%">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,7 +38,7 @@
                                     <td style="text-align: center"><span t-field="line.product_uom_qty"/></td>
                                     <td class="scale-text" style="text-align: left"><span t-field="line.product_id.name"/></td>
                                     <td style="text-align: right"><span t-field="line.price_unit"/></td>
-<!--                                    <td style="text-align: right"><span t-field="line.price_subtotal"/></td>-->
+                                    <td style="text-align: right"><span t-field="line.price_total"/></td>
                                 </tr>
                             </tbody>
                         </table>
