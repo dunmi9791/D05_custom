@@ -153,15 +153,15 @@ class ProductTemplate(models.Model):
         for record in self:
             record.list_price_readonly = record.list_price
 
-    def write(self, vals):
-        for rec in self:
-            if 'list_price' in vals:
-                if vals['list_price'] < rec.list_price and not self.env.user.has_group(
-                        'D05_customs.group_price_manager'):
-                    raise UserError(
-                        f"You cannot lower the price of {rec.name}. Only a Price Manager can do this."
-                    )
-        return super().write(vals)
+    # def write(self, vals):
+    #     for rec in self:
+    #         if 'list_price' in vals:
+    #             if vals['list_price'] < rec.list_price and not self.env.user.has_group(
+    #                     'D05_customs.group_price_manager'):
+    #                 raise UserError(
+    #                     f"You cannot lower the price of {rec.name}. Only a Price Manager can do this."
+    #                 )
+    #     return super().write(vals)
 
 
 
