@@ -25,6 +25,7 @@ Long description of module's purpose
         'records/groups.xml',
         'security/ir.model.access.csv',
         'security/rules.xml',
+        'security/central_price_security.xml',
         'views/customer_view.xml',
         'views/views.xml',
         'views/templates.xml',

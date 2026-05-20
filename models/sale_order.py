@@ -153,6 +153,16 @@ class ProductTemplate(models.Model):
         for record in self:
             record.list_price_readonly = record.list_price
 
+    def write(self, vals):
+        for rec in self:
+            if 'list_price' in vals:
+                if vals['list_price'] < rec.list_price and not self.env.user.has_group(
+                        'central_price_management.group_price_manager'):
+                    raise UserError(
+                        f"You cannot lower the price of {rec.name}. Only a Price Manager can do this."
+                    )
+        return super().write(vals)
+
 
 
 class SaleOrderLine(models.Model):
@@ -175,6 +185,16 @@ class SaleOrderLine(models.Model):
                 line.product_qty_available = qty_available
             else:
                 line.product_qty_available = 0.0
+
+
+    @api.constrains('price_unit')
+    def _check_minimum_price(self):
+        for line in self:
+            min_price = line.product_id.list_price
+            if line.price_unit < min_price:
+                raise UserError(
+                    f"The sale price of {line.product_id.name} cannot be lower than the set minimum price ({min_price})."
+                )
 
 
 
