@@ -157,7 +157,7 @@ class ProductTemplate(models.Model):
         for rec in self:
             if 'list_price' in vals:
                 if vals['list_price'] < rec.list_price and not self.env.user.has_group(
-                        'd05_customs.group_price_manager'):
+                        'D05_customs.group_price_manager'):
                     raise UserError(
                         f"You cannot lower the price of {rec.name}. Only a Price Manager can do this."
                     )
