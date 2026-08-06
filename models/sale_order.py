@@ -77,17 +77,19 @@ class SaleOrder(models.Model):
 
     def action_print_sales_docket(self):
         for order in self:
+            # Get only non-cancelled invoices
+            invoices = order.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
             # Ensure there are invoices associated with the sale order
-            if not order.invoice_ids:
+            if not invoices:
                 raise UserError("This order cannot be printed because it has no invoices.")
 
             # Check if all invoices are posted
-            if not all(invoice.state == 'posted' for invoice in order.invoice_ids):
+            if not all(invoice.state == 'posted' for invoice in invoices):
                 raise UserError("This order cannot be printed because not all invoices are fully posted.")
 
             # Check if all invoices are fully paid
             if order.customer_type != 'credit':
-                if not all(invoice.amount_residual == 0 for invoice in order.invoice_ids):
+                if not all(invoice.amount_residual == 0 for invoice in invoices):
                     raise UserError("This order cannot be printed because not all invoices are fully paid.")
 
 
@@ -96,11 +98,12 @@ class SaleOrder(models.Model):
 
     def _check_report_conditions(self):
         for order in self:
-            if not order.invoice_ids:
+            invoices = order.invoice_ids.filtered(lambda inv: inv.state != 'cancel')
+            if not invoices:
                 raise UserError("This order cannot be printed because it has no invoices.")
-            if not all(invoice.state == 'posted' for invoice in order.invoice_ids):
+            if not all(invoice.state == 'posted' for invoice in invoices):
                 raise UserError("This order cannot be printed as all invoices are not fully posted.")
-            if not all(invoice.amount_residual == 0 for invoice in order.invoice_ids):
+            if not all(invoice.amount_residual == 0 for invoice in invoices):
                 raise UserError("This order cannot be printed as all invoices are not fully paid.")
 
     def report_action(self, docids, data=None):
