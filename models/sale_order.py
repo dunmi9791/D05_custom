@@ -91,6 +91,17 @@ class SaleOrder(models.Model):
             if order.customer_type != 'credit':
                 if not all(invoice.amount_residual == 0 for invoice in invoices):
                     raise UserError("This order cannot be printed because not all invoices are fully paid.")
+            else:
+                # Credit customers: outstanding balance must stay below the credit limit
+                # (a limit of 0 means no limit)
+                partner = order.partner_id.sudo()
+                if partner.credit_limit and partner.outstanding_total >= partner.credit_limit:
+                    raise UserError(_(
+                        "This order cannot be printed because the customer's outstanding balance "
+                        "(%(outstanding).2f) is not below their credit limit (%(limit).2f).",
+                        outstanding=partner.outstanding_total,
+                        limit=partner.credit_limit,
+                    ))
 
 
         # Trigger the report if all conditions are met
