@@ -11,9 +11,31 @@
 
                                 <group name="misc" string="Misc">
                                     <field name="credit_limit" readonly="1"/>
-
+                                    <field name="outstanding_total" widget="monetary"/>
                                 </group>
                             </group>
+                            <separator string="Last 3 Orders"/>
+                            <field name="last_order_ids" nolabel="1" readonly="1">
+                                <tree create="0" delete="0">
+                                    <field name="name"/>
+                                    <field name="date_order"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="amount_total" widget="monetary" sum="Total"/>
+                                    <field name="payment_type"/>
+                                    <field name="invoice_status"/>
+                                </tree>
+                            </field>
+                            <separator string="Last 3 Payments" groups="account.group_account_invoice"/>
+                            <field name="last_payment_ids" nolabel="1" readonly="1" groups="account.group_account_invoice">
+                                <tree create="0" delete="0">
+                                    <field name="name"/>
+                                    <field name="date"/>
+                                    <field name="journal_id"/>
+                                    <field name="ref"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="amount" widget="monetary" sum="Total"/>
+                                </tree>
+                            </field>
                         </page>
 
         </xpath>
