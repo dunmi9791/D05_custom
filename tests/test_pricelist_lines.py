@@ -103,8 +103,54 @@ class TestPricelistLines(TransactionCase):
         action = self.pricelist.action_open_pricelist_lines()
         self.assertEqual(action['res_model'], 'product.pricelist.item')
         self.assertEqual(action['domain'], [('pricelist_id', '=', self.pricelist.id)])
+        self.assertEqual(action['context'].get('default_applied_on'), '1_product')
+        menu_action = self.env.ref('D05_custom.action_pricelist_lines')
+        self.assertIn("'default_applied_on': '1_product'", menu_action.context)
         self.assertEqual(self.pricelist.pricelist_line_count, 1)
         menu = self.env.ref('D05_custom.menu_pricelist_lines')
         self.assertEqual(menu.parent_id, self.env.ref('sale.product_menu_catalog'))
         view = self.env.ref('D05_custom.view_d05_pricelist_item_tree')
         self.assertIn('editable="bottom"', str(view.arch))
+
+    def test_product_chosen_on_a_global_default_stays_a_product_rule(self):
+        """Advanced pricelists leave applied_on on All Products unless told otherwise."""
+        Item = self.env['product.pricelist.item'].with_user(self.order_price_manager)
+        item = Item.create({
+            'pricelist_id': self.pricelist.id,
+            'applied_on': '3_global',
+            'product_tmpl_id': self.template.id,
+            'compute_price': 'fixed',
+            'fixed_price': 90.0,
+        })
+        self.assertEqual(item.applied_on, '1_product')
+        self.assertEqual(item.product_tmpl_id, self.template)
+        self.assertFalse(item.product_id)
+
+        variant_item = Item.create({
+            'pricelist_id': self.pricelist.id,
+            'applied_on': '3_global',
+            'product_id': self.product.id,
+            'compute_price': 'fixed',
+            'fixed_price': 90.0,
+        })
+        self.assertEqual(variant_item.applied_on, '0_product_variant')
+        self.assertEqual(variant_item.product_id, self.product)
+
+        with self.assertRaises(UserError):
+            Item.create({
+                'pricelist_id': self.pricelist.id,
+                'applied_on': '3_global',
+                'product_tmpl_id': self.template.id,
+                'compute_price': 'fixed',
+                'fixed_price': 10.0,
+            })
+
+        global_item = Item.create({
+            'pricelist_id': self.pricelist.id,
+            'applied_on': '3_global',
+            'compute_price': 'fixed',
+            'fixed_price': 10.0,
+        })
+        self.assertEqual(global_item.applied_on, '3_global')
+        self.assertFalse(global_item.product_tmpl_id)
+        self.assertFalse(global_item.product_id)

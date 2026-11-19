@@ -50,7 +50,7 @@
                 <field name="min_quantity" optional="show"/>
                 <field name="date_start" optional="hide"/>
                 <field name="date_end" optional="hide"/>
-                <field name="applied_on" optional="hide"/>
+                <field name="applied_on"/>
             </tree>
         </field>
     </record>
@@ -61,7 +61,7 @@
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="view_d05_pricelist_item_tree"/>
         <field name="search_view_id" ref="view_d05_pricelist_item_search"/>
-        <field name="context">{'search_default_active_pricelist': 1}</field>
+        <field name="context">{'search_default_active_pricelist': 1, 'default_applied_on': '1_product', 'default_compute_price': 'fixed', 'default_base': 'list_price'}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">No pricelist lines yet</p>
             <p>

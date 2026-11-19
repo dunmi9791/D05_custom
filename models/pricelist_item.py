@@ -63,13 +63,44 @@ class ProductPricelistItem(models.Model):
             "Only a sales price manager or an accountant can change pricelist lines."
         ))
 
+    def _d05_align_scope_with_product(self, vals, current=None):
+        """Keep a chosen product when the scope is still "all products".
+
+        Odoo 17 drops ``product_id`` and ``product_tmpl_id`` on create and
+        write when ``applied_on`` is ``3_global``. With advanced pricelists
+        enabled, selecting a product does not change that default, so the
+        saved line would price every product and skip the per-product floor.
+        """
+        vals = dict(vals)
+        if vals.get('applied_on') not in (None, False, '3_global'):
+            return vals
+        applied_on = vals.get('applied_on') or (current.applied_on if current else '3_global')
+        if applied_on not in (False, '3_global'):
+            return vals
+        if 'product_id' in vals:
+            product_id = vals.get('product_id')
+        else:
+            product_id = current.product_id.id if current else False
+        if 'product_tmpl_id' in vals:
+            template_id = vals.get('product_tmpl_id')
+        else:
+            template_id = current.product_tmpl_id.id if current else False
+        if product_id:
+            vals['applied_on'] = '0_product_variant'
+        elif template_id:
+            vals['applied_on'] = '1_product'
+        return vals
+
     @api.model_create_multi
     def create(self, vals_list):
         self._d05_check_can_edit_lines()
-        return super().create(vals_list)
+        prepared = [self._d05_align_scope_with_product(vals) for vals in vals_list]
+        return super().create(prepared)
 
     def write(self, vals):
         self._d05_check_can_edit_lines()
+        if len(self) == 1:
+            vals = self._d05_align_scope_with_product(vals, current=self)
         return super().write(vals)
 
     def unlink(self):
