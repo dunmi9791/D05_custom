@@ -7,3 +7,6 @@ access_product_template_d05_so_price_manager,product.template sales order price 
 access_product_product_d05_so_price_manager,product.product sales order price manager,product.model_product_product,D05_custom.group_sales_order_price_manager,1,1,0,0
 access_product_template_d05_price_manager,product.template sales price manager,product.model_product_template,D05_custom.group_price_manager,1,1,0,0
 access_product_product_d05_price_manager,product.product sales price manager,product.model_product_product,D05_custom.group_price_manager,1,1,0,0
+access_pricelist_item_d05_so_price_manager,pricelist.item sales order price manager,product.model_product_pricelist_item,D05_custom.group_sales_order_price_manager,1,1,1,1
+access_pricelist_item_d05_price_manager,pricelist.item sales price manager,product.model_product_pricelist_item,D05_custom.group_price_manager,1,1,1,1
+access_pricelist_item_d05_account_manager,pricelist.item accountant,product.model_product_pricelist_item,account.group_account_manager,1,1,1,1

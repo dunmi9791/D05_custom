@@ -15,7 +15,7 @@ Long description of module's purpose
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': '17.0.1.1.0',
+    'version': '17.0.1.2.0',
     'post_init_hook': 'post_init_hook',
 
     # any module necessary for this one to work correctly
@@ -27,6 +27,7 @@ Long description of module's purpose
         'security/ir.model.access.csv',
         'security/rules.xml',
         'security/central_price_security.xml',
+        'security/pricelist_line_security.xml',
         'views/customer_view.xml',
         'views/views.xml',
         'views/templates.xml',
@@ -35,6 +36,7 @@ Long description of module's purpose
         'views/report_actions.xml',
         'views/sale_order_form_view.xml',
         'views/minimum_price_views.xml',
+        'views/pricelist_line_views.xml',
 
     ],
     'assets': {
