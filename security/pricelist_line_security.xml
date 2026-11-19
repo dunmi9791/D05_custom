@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Sales Administrator currently has full write on pricelist lines
+        (sale.access_product_pricelist_item_sale_manager). Price edits belong
+        to the price-manager groups and Billing Administrator; the extra rows
+        are in ir.model.access.csv. Settings keeps the standard product-module
+        row, so base.group_system can still edit.
+
+        Upgrading the sale module on its own can put write back on this row.
+        product.pricelist.item write/create/unlink still refuse anyone outside
+        the price groups, so a restored ACL cannot bypass the floor or the role.
+    -->
+    <record id="sale.access_product_pricelist_item_sale_manager" model="ir.model.access">
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+</odoo>

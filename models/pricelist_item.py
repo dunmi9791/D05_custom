@@ -21,19 +21,60 @@ Not covered on the rule itself (the sale order line still refuses the price):
 
 A minimum of zero on the product skips the check for that product.
 """
-from odoo import fields, models, _
-from odoo.exceptions import UserError
+from odoo import api, fields, models, _
+from odoo.exceptions import AccessError, UserError
 
 from .price_floor import (
+    SELLING_PRICE_GROUP_XMLIDS,
     convert_amount,
     floor_is_active,
     format_amount,
     price_below,
+    user_has_any_group,
 )
 
 
 class ProductPricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
+
+    default_code = fields.Char(
+        string='Internal Reference',
+        compute='_compute_default_code',
+        store=True,
+        index=True,
+        help="Product internal reference, kept on the line so the pricelist "
+             "list can be searched without joining the product on every keystroke.",
+    )
+
+    @api.depends('product_id.default_code', 'product_tmpl_id.default_code', 'applied_on')
+    def _compute_default_code(self):
+        for item in self:
+            if item.product_id:
+                item.default_code = item.product_id.default_code
+            elif item.product_tmpl_id:
+                item.default_code = item.product_tmpl_id.default_code
+            else:
+                item.default_code = False
+
+    def _d05_check_can_edit_lines(self):
+        if user_has_any_group(self.env, SELLING_PRICE_GROUP_XMLIDS):
+            return
+        raise AccessError(_(
+            "Only a sales price manager or an accountant can change pricelist lines."
+        ))
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        self._d05_check_can_edit_lines()
+        return super().create(vals_list)
+
+    def write(self, vals):
+        self._d05_check_can_edit_lines()
+        return super().write(vals)
+
+    def unlink(self):
+        self._d05_check_can_edit_lines()
+        return super().unlink()
 
     def _d05_products_for_floor(self):
         self.ensure_one()
