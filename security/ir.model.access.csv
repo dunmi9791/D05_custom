@@ -1,3 +1,9 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_credit_limit_wizard,access_credit_limit_wizard,model_credit_limit_wizard,base.group_user,1,1,1,1
 access_sale_order_credit_control,sale.order,model_sale_order,D05_custom.group_credit_control,1,0,0,0
+access_product_template_d05_account_manager,product.template accountant minimum,product.model_product_template,account.group_account_manager,1,1,0,0
+access_product_product_d05_account_manager,product.product accountant minimum,product.model_product_product,account.group_account_manager,1,1,0,0
+access_product_template_d05_so_price_manager,product.template sales order price manager,product.model_product_template,D05_custom.group_sales_order_price_manager,1,1,0,0
+access_product_product_d05_so_price_manager,product.product sales order price manager,product.model_product_product,D05_custom.group_sales_order_price_manager,1,1,0,0
+access_product_template_d05_price_manager,product.template sales price manager,product.model_product_template,D05_custom.group_price_manager,1,1,0,0
+access_product_product_d05_price_manager,product.product sales price manager,product.model_product_product,D05_custom.group_price_manager,1,1,0,0

@@ -26,10 +26,13 @@
         <field name="arch" type="xml">
             <!-- Use XPath to locate the 'list_price' field -->
             <xpath expr="//field[@name='list_price']" position="replace">
-                <!-- Field visible and editable only to Price Managers -->
-                <field name="list_price" groups="D05_custom.group_sales_order_price_manager"/>
-                <!-- Read-only field visible to other internal users -->
-                <field name="list_price_readonly" readonly="1" groups="base.group_user"/>
+                <!-- Sales price managers and accountants. Everyone else sees the read-only copy. -->
+                <field name="list_price" widget="monetary"
+                       options="{'currency_field': 'currency_id', 'field_digits': True}"
+                       groups="D05_custom.group_sales_order_price_manager,D05_custom.group_price_manager,account.group_account_manager,base.group_system"/>
+                <field name="list_price_readonly" readonly="1" widget="monetary"
+                       options="{'currency_field': 'currency_id', 'field_digits': True}"
+                       groups="!D05_custom.group_sales_order_price_manager,!D05_custom.group_price_manager,!account.group_account_manager,!base.group_system"/>
             </xpath>
         </field>
     </record>
