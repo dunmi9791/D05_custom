@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_customer_outstanding_tree" model="ir.ui.view">
+        <field name="name">d05.customer.outstanding.tree</field>
+        <field name="model">d05.customer.outstanding</field>
+        <field name="arch" type="xml">
+            <tree create="0" edit="0" delete="0" default_order="partner_id, company_id">
+                <field name="as_of_date"/>
+                <field name="partner_id"/>
+                <field name="customer_type"/>
+                <field name="company_id"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="balance"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_customer_outstanding_form" model="ir.ui.view">
+        <field name="name">d05.customer.outstanding.form</field>
+        <field name="model">d05.customer.outstanding</field>
+        <field name="arch" type="xml">
+            <form create="0" edit="0" delete="0">
+                <sheet>
+                    <group>
+                        <field name="partner_id"/>
+                        <field name="customer_type"/>
+                        <field name="company_id"/>
+                        <field name="as_of_date"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="balance"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_customer_outstanding_search" model="ir.ui.view">
+        <field name="name">d05.customer.outstanding.search</field>
+        <field name="model">d05.customer.outstanding</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="company_id"/>
+                <field name="customer_type"/>
+                <filter name="filter_cash" string="Cash Customers" domain="[('customer_type', '=', 'cash')]"/>
+                <filter name="filter_credit" string="Credit Customers" domain="[('customer_type', '=', 'credit')]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_branch" string="Branch" context="{'group_by': 'company_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_customer_outstanding_wizard_form" model="ir.ui.view">
+        <field name="name">d05.customer.outstanding.wizard.form</field>
+        <field name="model">d05.customer.outstanding.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Customer Outstanding Balances">
+                <header>
+                    <button name="action_view_balances" type="object" string="View Balances" class="btn-primary"/>
+                </header>
+                <sheet>
+                    <div class="alert alert-info" role="alert">
+                        <p>
+                            The balance is the Partner Ledger receivable total for that customer and branch:
+                            posted journal items on receivable accounts, debit minus credit, up to the as-of date.
+                            A payment that was registered and posted is included when it was never reconciled.
+                        </p>
+                        <p>
+                            This is not the Outstanding Total on the customer, which sums unpaid invoice residuals
+                            and stays higher while a payment is still unapplied.
+                        </p>
+                        <p>
+                            A customer with a balance in two branches is listed twice, in each branch currency.
+                            Contacts are grouped on the commercial partner. To compare a row, run Partner Ledger
+                            with that branch as the active company, Receivable Accounts, All Posted Entries,
+                            Reconciled Entries ticked, Start Date empty, End Date equal to this as-of date,
+                            and every journal left selected. Amounts that round to zero are omitted.
+                            A negative balance is a net credit on the receivable account.
+                        </p>
+                    </div>
+                    <group>
+                        <field name="as_of_date"/>
+                        <field name="company_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_customer_outstanding_wizard" model="ir.actions.act_window">
+        <field name="name">Customer Outstanding Balances</field>
+        <field name="res_model">d05.customer.outstanding.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="groups_id" eval="[(4, ref('D05_custom.group_customer_outstanding'))]"/>
+    </record>
+
+    <menuitem id="menu_customer_outstanding"
+              name="Customer Outstanding Balances"
+              parent="account.menu_finance_reports"
+              action="action_customer_outstanding_wizard"
+              sequence="25"
+              groups="D05_custom.group_customer_outstanding"/>
+</odoo>
