@@ -345,6 +345,50 @@ class TestCustomerOutstanding(TransactionCase):
         with self.assertRaises(AccessError):
             cash_line.with_user(outsider).read(['balance'])
 
+    def test_branch_specific_partner_outside_company_switcher(self):
+        """A customer tied to an unticked branch is still listed when that branch is selected."""
+        partner = self.env['res.partner'].create({
+            'name': 'South Only Customer',
+            'company_type': 'company',
+            'is_company': True,
+            'company_id': self.south.company.id,
+        })
+        self._assign_receivable(partner, self.south)
+        self._invoice(partner, self.south, 55.0, '2026-11-01')
+
+        reader = self._make_user('outstanding_branch_reader', [
+            self.env.ref('D05_custom.group_customer_outstanding').id,
+        ])
+        # The switcher has only North. The wizard asks for South as well.
+        switcher = {'allowed_company_ids': [self.north.company.id]}
+        partner_as_reader = self.env['res.partner'].with_user(reader).with_context(**switcher).browse(partner.id)
+        with self.assertRaises(AccessError):
+            partner_as_reader.read(['commercial_partner_id'])
+
+        report = self.env['d05.customer.outstanding'].with_user(reader).with_context(**switcher)
+        rows = report._prepare_rows(self.as_of, self.north.company | self.south.company)
+        found = [row for row in rows if row['partner_id'] == partner.id]
+        self.assertEqual(len(found), 1)
+        self.assertEqual(found[0]['company_id'], self.south.company.id)
+        self._assert_amount(self.south.company, found[0]['balance'], 55.0)
+
+        wizard = self.env['d05.customer.outstanding.wizard'].with_user(reader).with_context(**switcher).create({
+            'as_of_date': self.as_of,
+            'company_ids': [(6, 0, (self.north.company | self.south.company).ids)],
+        })
+        action = wizard.action_view_balances()
+        self.assertEqual(
+            set(action['context']['allowed_company_ids']),
+            {self.north.company.id, self.south.company.id},
+        )
+        lines = report.with_context(
+            allowed_company_ids=action['context']['allowed_company_ids'],
+        ).search(action['domain'])
+        south_line = lines.filtered(lambda line: line.partner_id.id == partner.id)
+        self.assertEqual(len(south_line), 1)
+        self.assertEqual(south_line.partner_id.name, 'South Only Customer')
+        self._assert_amount(self.south.company, south_line.balance, 55.0)
+
     def _make_user(self, login, extra_group_ids):
         groups = [
             self.env.ref('base.group_user').id,

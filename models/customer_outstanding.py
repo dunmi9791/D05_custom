@@ -93,6 +93,12 @@ class D05CustomerOutstanding(models.TransientModel):
         if not as_of_date:
             raise UserError(_("Set the as-of date."))
         companies = self._companies_for_report(companies)
+        # The switcher may have fewer companies than the wizard. Keep the
+        # selected branches on the env used for journal items, partners, and
+        # company currency, otherwise a customer restricted to an unticked
+        # branch raises AccessError when commercial_partner_id is read.
+        report = self.with_context(allowed_company_ids=list(companies.ids))
+        companies = report.env['res.company'].browse(companies.ids)
         domain = [
             ('parent_state', '=', 'posted'),
             ('date', '<=', as_of_date),
@@ -102,12 +108,7 @@ class D05CustomerOutstanding(models.TransientModel):
             ('account_id.deprecated', '=', False),
             ('display_type', 'not in', ('line_section', 'line_note')),
         ]
-        # allowed_company_ids makes the company record rule include every
-        # selected branch, including ones not currently ticked in the switcher.
-        move_lines = self.env['account.move.line'].with_context(
-            allowed_company_ids=companies.ids,
-        )
-        grouped = move_lines.read_group(
+        grouped = report.env['account.move.line'].read_group(
             domain,
             ['balance:sum'],
             ['partner_id', 'company_id'],
@@ -116,7 +117,7 @@ class D05CustomerOutstanding(models.TransientModel):
         partner_ids = [
             group['partner_id'][0] for group in grouped if group.get('partner_id')
         ]
-        partners = self.env['res.partner'].browse(partner_ids)
+        partners = report.env['res.partner'].browse(partner_ids)
         commercial_of = {
             partner.id: partner.commercial_partner_id.id for partner in partners
         }
@@ -170,10 +171,15 @@ class D05CustomerOutstandingWizard(models.TransientModel):
     def action_view_balances(self):
         self.ensure_one()
         outstanding = self.env['d05.customer.outstanding']
+        companies = outstanding._companies_for_report(self.company_ids)
+        company_ids = list(companies.ids)
+        # Same company context as the aggregation, so creating the rows
+        # (customer type) and opening the list (partner name) can read a
+        # customer whose company is selected here but unticked in the switcher.
+        report = outstanding.with_context(allowed_company_ids=company_ids)
         # Keep a single run on screen if the user clears the id filter.
-        outstanding.search([('create_uid', '=', self.env.uid)]).unlink()
-        rows = outstanding._prepare_rows(self.as_of_date, self.company_ids)
-        lines = outstanding.create(rows)
+        report.search([('create_uid', '=', self.env.uid)]).unlink()
+        lines = report.create(report._prepare_rows(self.as_of_date, companies))
         return {
             'type': 'ir.actions.act_window',
             'name': _('Customer Outstanding Balances'),
@@ -184,6 +190,7 @@ class D05CustomerOutstandingWizard(models.TransientModel):
                 'create': False,
                 'edit': False,
                 'delete': False,
+                'allowed_company_ids': company_ids,
             },
             'target': 'current',
         }
