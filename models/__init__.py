@@ -4,6 +4,7 @@ from . import models
 from . import sale_order
 from . import account
 from . import customer
+from . import customer_outstanding
 
 
 

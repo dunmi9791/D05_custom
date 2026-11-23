@@ -15,7 +15,7 @@ Long description of module's purpose
     # Check https://github.com/odoo/odoo/blob/15.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
-    'version': '0.1',
+    'version': '0.2',
 
     # any module necessary for this one to work correctly
     'depends': ['base', 'sale','account', 'om_account_accountant', 'stock'],
@@ -25,8 +25,10 @@ Long description of module's purpose
         'records/groups.xml',
         'security/ir.model.access.csv',
         'security/rules.xml',
+        'security/customer_outstanding_security.xml',
         'security/central_price_security.xml',
         'views/customer_view.xml',
+        'views/customer_outstanding_views.xml',
         'views/views.xml',
         'views/templates.xml',
         'reports/sale_order_report.xml',
